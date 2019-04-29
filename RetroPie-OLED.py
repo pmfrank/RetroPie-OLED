@@ -20,8 +20,8 @@ This code edited for rpi3 Retropie v4.0.2 and later by zzeromin
 import time
 import os
 from sys import exit
-from subprocess import *
-from time import *
+from subprocess import Popen, PIPE
+from time import slep
 from datetime import datetime
 
 import Adafruit_GPIO.SPI as SPI
@@ -53,7 +53,7 @@ def run_cmd(cmd):
 # runs whatever in the cmd variable
     p = Popen(cmd, shell=True, stdout=PIPE)
     output = p.communicate()[0]
-    return output
+    return output.decode('utf-8')
 
 def get_ip_address(cmd, cmdeth):
     # ip & date information
@@ -66,15 +66,13 @@ def get_ip_address(cmd, cmdeth):
     return ipaddr
 
 def get_cpu_temp():
-    tempFile = open("/sys/class/thermal/thermal_zone0/temp")
-    cpu_temp = tempFile.read()
-    tempFile.close()
+    with open("/sys/class/thermal/thermal_zone0/temp") as temp_file:
+        cpu_temp = temp_file.read()
     return float(cpu_temp)/1000
 
 def get_cpu_speed():
-    tempFile = open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq")
-    cpu_speed = tempFile.read()
-    tempFile.close()
+    with open("/sys/devices/system/cpu/cpu0/cpufreq/scaling_cur_freq") as cpu_file:
+        cpu_speed = cpu_file.read()
     return float(cpu_speed)/1000
 
 def main():
