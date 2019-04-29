@@ -15,13 +15,16 @@ https://github.com/haven-jeon/piAu_volumio
 Notice       :
 installed python package: python-pip python-imaging python-dev python-smbus i2c-tools
 This code edited for rpi3 Retropie v4.0.2 and later by zzeromin
+
+Code refactored by Paul Frankovich April 28, 2019
+I required libjpeg-dev before I could install Pillow
 """
 
 import time
 import os
-from sys import exit
+import sys
 from subprocess import Popen, PIPE
-from time import slep
+from time import sleep
 from datetime import datetime
 
 import Adafruit_GPIO.SPI as SPI
@@ -32,9 +35,6 @@ from PIL import ImageDraw
 from PIL import ImageFont
 
 import textwrap
-import sys
-reload(sys)
-sys.setdefaultencoding('utf-8')
 
 # Raspberry Pi pin configuration:
 RST = 24
@@ -60,8 +60,7 @@ def get_ip_address(cmd, cmdeth):
     ipaddr = run_cmd(cmd)
 
     # selection of wlan or eth address
-    count = len(ipaddr)
-    if count == 0 :
+    if len(ipaddr) == 0:
         ipaddr = run_cmd(cmdeth)
     return ipaddr
 
